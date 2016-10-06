@@ -1,0 +1,10 @@
+<dataset>
+    <person id="1"
+          name="John Doe"
+          age="5"
+          status="active"/>
+    <person id="2"
+          name="Jane Doe"
+          age="50"
+          status="active"/>
+</dataset>
