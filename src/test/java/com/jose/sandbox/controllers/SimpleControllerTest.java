@@ -4,7 +4,7 @@ import com.despegar.sparkjava.test.SparkClient;
 import com.despegar.sparkjava.test.SparkServer;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.jose.sandbox.controllers.routes.CheckNumbersRoute;
+import com.jose.sandbox.controllers.routes.PersonRoute;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,7 +35,7 @@ import static org.junit.Assert.assertNotNull;
 })
 @DatabaseSetup("persons-entities.xml")
 @Transactional
-public class CheckNumbersControllerTest {
+public class SimpleControllerTest {
 
     @Configuration
     @ComponentScan(basePackages = {"com.jose.sandbox"})
@@ -53,30 +53,31 @@ public class CheckNumbersControllerTest {
     @Component
     public static class TestControllerTestApplication implements SparkApplication {
 
-        @Autowired CheckNumbersRoute checkNumbersRoute;
+        @Autowired
+        PersonRoute personRoute;
 
         @Override
         public void init() {
-            new CheckNumbersController(this.checkNumbersRoute);
+            new SimpleController(this.personRoute);
         }
     }
 
     @ClassRule
-    public static SparkServer<CheckNumbersControllerTest.TestControllerTestApplication> testServer
-            = new SparkServer<>(CheckNumbersControllerTest.TestControllerTestApplication.class, 4567);
+    public static SparkServer<SimpleControllerTest.TestControllerTestApplication> testServer
+            = new SparkServer<>(SimpleControllerTest.TestControllerTestApplication.class, 4567);
 
     @Test
     public void one() throws Exception {
         // given
-        String payload = "{ \"numbers\": \"1 2 3 4 5\", \"multiplier\": \"10\", \"Mega Millions\", \"ticket_date\": \"2016-10-10\" }";
+        String payload = null;
 
         // when
-        SparkClient.UrlResponse response = testServer.getClient().doMethod("POST", "/private/check", payload);
+        SparkClient.UrlResponse response = testServer.getClient().doMethod("GET", "/hello", payload);
 
         // then
-        String expected = "";
+        int expected = 3; // because that's how many exist in persons-entities.xml
         assertEquals(200, response.status);
-        assertEquals(expected, response.body);
+        assertEquals(expected, Integer.parseInt(response.body));
         assertNotNull(testServer.getApplication());
     }
 
