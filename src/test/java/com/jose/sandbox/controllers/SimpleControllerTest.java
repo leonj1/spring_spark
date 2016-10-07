@@ -70,12 +70,12 @@ public class SimpleControllerTest {
             = new SparkServer<>(SimpleControllerTest.TestControllerTestApplication.class, 4567);
 
     @Test
-    public void one() throws Exception {
+    public void verifyGetAllPeople() throws Exception {
         // given
         String payload = null;
 
         // when
-        SparkClient.UrlResponse response = testServer.getClient().doMethod("GET", "/hello", payload);
+        SparkClient.UrlResponse response = testServer.getClient().doMethod("GET", "/people/count", payload);
 
         // then
         int expected = 3; // because that's how many exist in persons-entities.xml

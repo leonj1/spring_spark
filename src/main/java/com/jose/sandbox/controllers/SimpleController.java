@@ -12,16 +12,16 @@ import static spark.Spark.get;
 public class SimpleController {
 
     // #2 debug point 2, also shows this as NULL
-    @Autowired PersonRoute helloRoute;
+    @Autowired PersonRoute personRoute;
 
     public SimpleController() {}
 
-    public SimpleController(PersonRoute helloRoute) {
-        this.helloRoute = helloRoute;
+    public SimpleController(PersonRoute personRoute) {
+        this.personRoute = personRoute;
     }
 
     @PostConstruct
     public void init() {
-        get("/hello", this.helloRoute);
+        get("/people/count", this.personRoute);
     }
 }
