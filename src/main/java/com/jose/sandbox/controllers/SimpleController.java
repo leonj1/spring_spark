@@ -11,8 +11,8 @@ import static spark.Spark.get;
 @Component
 public class SimpleController {
 
-    @Autowired
-    PersonRoute helloRoute;
+    // #2 debug point 2, also shows this as NULL
+    @Autowired PersonRoute helloRoute;
 
     public SimpleController() {}
 

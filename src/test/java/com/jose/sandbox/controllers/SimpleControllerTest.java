@@ -44,6 +44,9 @@ public class SimpleControllerTest {
         // because @PropertySource doesn't work in annotation only land
         @Bean
         public PropertyPlaceholderConfigurer propConfig() {
+            // #3 debug point 3, then shows Spring creating beans
+            // but how does SimpleController.class get the property set?
+            // does this mean 2 different SimpleController objects exist in the JVM, but only one is "wired"?
             PropertyPlaceholderConfigurer ppc = new PropertyPlaceholderConfigurer();
             ppc.setLocation(new ClassPathResource("application.properties"));
             return ppc;
@@ -53,8 +56,8 @@ public class SimpleControllerTest {
     @Component
     public static class TestControllerTestApplication implements SparkApplication {
 
-        @Autowired
-        PersonRoute personRoute;
+        // #1 debug point 1 in IDE shows this as NULL
+        @Autowired PersonRoute personRoute;
 
         @Override
         public void init() {
