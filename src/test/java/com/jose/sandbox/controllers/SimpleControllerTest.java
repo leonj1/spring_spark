@@ -4,12 +4,10 @@ import com.despegar.sparkjava.test.SparkClient;
 import com.despegar.sparkjava.test.SparkServer;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.jose.sandbox.controllers.routes.PersonRoute;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -20,33 +18,30 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
-import org.springframework.transaction.annotation.Transactional;
 import spark.Response;
 import spark.servlet.SparkApplication;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.springframework.test.context.TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
-@TestExecutionListeners({
-        DependencyInjectionTestExecutionListener.class,
-        DbUnitTestExecutionListener.class
-})
+@TestExecutionListeners(
+        value = {
+                DependencyInjectionTestExecutionListener.class,
+                DbUnitTestExecutionListener.class
+        },
+        mergeMode = MERGE_WITH_DEFAULTS)
 @DatabaseSetup("persons-entities.xml")
-@Transactional
 public class SimpleControllerTest {
 
     @Configuration
     @ComponentScan(basePackages = {"com.jose.sandbox"})
     static class SomeConfig {
 
-        // because @PropertySource doesn't work in annotation only land
         @Bean
-        public PropertyPlaceholderConfigurer propConfig() {
-            // #3 debug point 3, then shows Spring creating beans
-            // but how does SimpleController.class get the property set?
-            // does this mean 2 different SimpleController objects exist in the JVM, but only one is "wired"?
+        public static PropertyPlaceholderConfigurer propConfig() {
             PropertyPlaceholderConfigurer ppc = new PropertyPlaceholderConfigurer();
             ppc.setLocation(new ClassPathResource("application.properties"));
             return ppc;
@@ -56,12 +51,8 @@ public class SimpleControllerTest {
     @Component
     public static class TestControllerTestApplication implements SparkApplication {
 
-        // #1 debug point 1 in IDE shows this as NULL
-        @Autowired PersonRoute personRoute;
-
         @Override
         public void init() {
-            new SimpleController(this.personRoute);
         }
     }
 
